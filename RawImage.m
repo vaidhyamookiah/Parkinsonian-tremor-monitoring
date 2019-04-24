@@ -1,16 +1,18 @@
 % Parkinsonion Tremor measurement
-% Description:
+% Description: 
+%Hand tremor movement using Walabot
 
-% ****************Setup variables**********************
+% **************** Walablot Setup variables **********************
 % Define Arena and Threshold (Where R_in=[R_min,R_max,R_resolution] and similarly for Theta_in and Phi_in )
+
 R_in=[10,100,5];
 Theta_in=[-30,30,10];
 Phi_in=[-70,70,10];
 Threshold=60;
 
-% Setup
-global API
-asm=NET.addAssembly('C:\Program Files\Walabot\WalabotSDK\bin\WalabotAPI.NET.dll');
+% Walabot API Setup
+global API % declaration of API
+asm=NET.addAssembly('C:\Program Files\Walabot\WalabotSDK\bin\WalabotAPI.NET.dll'); % Change API file destination accordingly
 
 import WalabotAPI_NET.*;
 API = WalabotAPI_NET.WalabotAPI();
@@ -38,18 +40,19 @@ API.GetStatus();
 API.StartCalibration();
 API.GetStatus();
 
+% Starting Loop
 while true
-    API.Trigger();
+    API.Trigger(); 
     %result=API.GetRawImage;
-    Aresult=API.GetRawImageSlice();
-    Data = int32(result);
+    Aresult=API.GetRawImageSlice(); % Gathers 2D image of the reflected signal
+    Data = int32(result); 
     clf
-    Y = fft2(Data);
+    Y = fft2(Data); % Converts the signal to frequency domain and plot it
     surf(abs(fftshift(Y)))
     zlim([0 2000])
-%     surf(Data);
+%     surf(Data);   % Plots Raw Data
 %     zlim([0 300])
     pause(0.01)
 end
 
-API.Clean
+API.Clean  % If API is being used Run this command to close it.
